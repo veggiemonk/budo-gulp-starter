@@ -11,7 +11,8 @@ const budo = require('budo')
 const browserify = require('browserify')
 const resetCSS = require('node-reset-scss').includePath
 const babelify = require('babelify').configure({
-  presets: ['es2015'] 
+  presets: ['es2015'],
+  plugins: ['mjsx']
 })
 
 const entry = './src/index.js'

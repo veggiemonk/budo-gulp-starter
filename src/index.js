@@ -1,25 +1,39 @@
-const domify = require('domify')
+import domify from 'domify';
+import domready from 'domready';
+import m from 'mithril';
 
-require('domready')(() => {
-  //show canvas demo
-  let context = require('./canvas')()
-  document.body.appendChild(context.canvas)
 
-  //show copy
-  let url = 'https://github.com/mattdesl/budo-gulp-starter'
-  let list = [
-    'npm dependencies with browserify',
-    'incremental bundling with watchify',
-    'SASS for CSS pre-processor',
-    'LiveReload for browser refresh and CSS injection',
-    'Babel for ES6 transpiling',
-    'syntax error reporting with errorify'
-  ].map(x => `<li>${x}</li>`)
-   .join('\n')
+const Page = {
+  list: () => ( m.prop( [
+    { url: 'http://github.com', title: 'github' },
+    { url: 'http://github.com', title: 'github 2' },
+    { url: 'http://gitlab.com', title: 'gitlab' }
+  ] ) )
+}
+const Demo = {
+  //controller
+  controller: function () {
+    var pages = Page.list();
+    return {
+      pages:  pages,
+      rotate: function () {
+        pages().push( pages().shift() );
+      }
+    }
+  },
 
-  list = domify(`
-    <p>workflow</p>
-    <ul>${list}</ul>
-    <a href="${url}">[source]</a>`)
-  document.body.appendChild(list)
-})
+  //view
+  view: ( ctrl ) => (
+      <div class="myList">
+        {
+          ctrl.pages().map( ( page ) => ( <a href={ page.url }>{page.title}</a> ) )
+        }
+        <button onclick={ ctrl.rotate }> "Rotate links"</button>
+      </div>
+  )
+};
+
+domready( () => {
+  //initialize
+  m.mount( document.getElementById( "app" ), Demo );
+} )
